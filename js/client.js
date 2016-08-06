@@ -174,7 +174,7 @@ console.log('Starting...');
         // search2FormArtist.value = response.body.artist;
         // search2FormTitle.value = response.body.title;
         // search2Form.submit();
-      });
+      }
     });
 
     Quagga.onProcessed(function(result) {

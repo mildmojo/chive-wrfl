@@ -46,6 +46,9 @@
 
 	var Quagga = __webpack_require__(1);
 	var request = __webpack_require__(2);
+	var albumCache = {};
+	var albumCacheKeys = [];
+	var CACHE_MAX_LENGTH = 100;
 
 	if (document.readyState != 'loading'){
 	  start();
@@ -182,26 +185,42 @@
 	    // search2Window = window.open('about:blank', 'search2');
 
 	    Quagga.onDetected(function(data) {
+	      var barcode = data.codeResult.code;
 	      console.log('DETECTED');
-	      console.log(data.codeResult.code);
+	      console.log(barcode);
+
+	      if (barcode in albumCache) {
+	        return processResponse(null, albumCache[barcode]);
+	      }
+
 	      request
-	        .get('/barcode/' + data.codeResult.code)
-	        .end(function(err, response) {
-	          if (err) return console.log(err);
-	          if (response.statusCode !== 200) return console.log(response.statusText);
-	          if (!response.body) return console.log('Server returned no results');
-	          console.log(response.body.artist + ' - ' + response.body.title);
-	          urlArtist = encodeURIComponent(response.body.artist);
-	          urlTitle = encodeURIComponent(response.body.title);
-	          searchImage1.src = '/searchOld.png?artist=' + urlArtist + '&title=' + urlTitle;
-	          searchImage2.src = '/searchNew.png?artist=' + urlArtist + '&title=' + urlTitle;
-	          // window.open('http://wrfl.fm/search/plays?utf8=%E2%9C%93&play%5Bartist%5D=' + urlArtist + '&play%5Btrack%5D=&play%5Balbum%5D=' + urlTitle + '&commit=Search+Plays', 'search1');
-	          albumInfo.innerText = response.body.artist + ' - ' + response.body.title + ' (' + response.body.date + ')';
-	          // search1.src = 'http://wrfl.fm/search/plays?utf8=%E2%9C%93&play%5Bartist%5D=' + urlArtist + '&play%5Btrack%5D=&play%5Balbum%5D=' + urlTitle + '&commit=Search+Plays'
-	          // search2FormArtist.value = response.body.artist;
-	          // search2FormTitle.value = response.body.title;
-	          // search2Form.submit();
-	        });
+	        .get('/barcode/' + barcode)
+	        .end(processResponse);
+
+	      function processResponse(err, response) {
+	        if (err) return console.log(err);
+	        if (response.statusCode !== 200) return console.log(response.statusText);
+	        if (!(barcode in albumCache)) {
+	          albumCache[barcode] = response;
+	          albumCacheKeys.push(barcode);
+	          while (albumCacheKeys.length > CACHE_MAX_LENGTH) {
+	            var key = albumCacheKeys.shift();
+	            delete albumCache[key];
+	          }
+	        }
+	        if (!response.body) return console.log('Server returned no results');
+	        console.log(response.body.artist + ' - ' + response.body.title);
+	        urlArtist = encodeURIComponent(response.body.artist);
+	        urlTitle = encodeURIComponent(response.body.title);
+	        searchImage1.src = '/searchOld.png?artist=' + urlArtist + '&title=' + urlTitle;
+	        searchImage2.src = '/searchNew.png?artist=' + urlArtist + '&title=' + urlTitle;
+	        // window.open('http://wrfl.fm/search/plays?utf8=%E2%9C%93&play%5Bartist%5D=' + urlArtist + '&play%5Btrack%5D=&play%5Balbum%5D=' + urlTitle + '&commit=Search+Plays', 'search1');
+	        albumInfo.innerText = response.body.artist + ' - ' + response.body.title + ' (' + response.body.date + ')';
+	        // search1.src = 'http://wrfl.fm/search/plays?utf8=%E2%9C%93&play%5Bartist%5D=' + urlArtist + '&play%5Btrack%5D=&play%5Balbum%5D=' + urlTitle + '&commit=Search+Plays'
+	        // search2FormArtist.value = response.body.artist;
+	        // search2FormTitle.value = response.body.title;
+	        // search2Form.submit();
+	      }
 	    });
 
 	    Quagga.onProcessed(function(result) {
