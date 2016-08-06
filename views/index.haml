@@ -1,0 +1,33 @@
+!!! 5
+%head
+  %link{rel: 'stylesheet', type: 'text/css', href: 'css/main.css'}
+  %script{type: 'text/javascript', src: 'js/build.js'}
+  %title Chive: automated archival assistant
+%body
+  %h1 Welcome to Chive!
+  %h3#album-info No album info found yet.
+  .links
+    %a{href: 'http://wrfl-server.ad.uky.edu/en/search/'} old search
+    %a{href: 'http://wrfl.fm/search/plays'} new search
+    %a{href: 'https://docs.google.com/document/d/1mOMKgBwaCCLA8JM-2OWawub7Wxs2P-wb7FayUqSISh8/edit?pref=2&pli=1'} instructions
+
+  .images
+    #interactive.viewport
+    %img#search1.search-result
+    %img#search2.search-result
+
+  -# %form
+  -#   .input-field
+  -#     %label{for: 'isbn_input'} EAN:
+  -#     %input#isbn_input.isbn{type: 'text'}
+  -#     %button.icon-barcode.button.scan{type: 'button'}
+  -# #debug
+
+  -# %form#search2Form.hidden{action: 'http://wrfl-server.ad.uky.edu/en/search/', method: 'post', target: 'search2'}
+  -#   %input#artist{name: 'artist', type: 'text'}
+  -#   %input#title{name: 'title', type: 'text'}
+
+
+
+  -# %iframe#search1{name: 'search1'}
+  -# %iframe#search2{name: 'search2'}

@@ -1,0 +1,30 @@
+#cam-preview {
+  display: block;
+  width: 320;
+  height: 200;
+  border: 1px solid black;
+}
+
+.hidden {
+  display: none;
+}
+
+.images {
+  display: flex;
+  align-items: flex-start;
+}
+
+#interactive {
+  position: relative;
+}
+
+#interactive > .drawingBuffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/*#search1 {
+  max-width: 600px;
+}
+*/
