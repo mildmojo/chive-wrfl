@@ -29,7 +29,7 @@
 
     #resultsContainer .headers .header {
       flex: 1 1 auto;
-      width: 25%;
+      width: 20%;
       padding: 5px;
       padding-left: 15px;
     }
@@ -41,7 +41,7 @@
 
     #results .result * {
       flex: 1 1 auto;
-      width: 25%;
+      width: 20%;
       padding: 5px;
       padding-left: 15px;
     }
@@ -115,6 +115,7 @@ console.timeEnd('search');
     function formatResult(result, zebra) {
       return '<div class="result ' + (zebra ? 'even' : 'odd') + '">' +
         '<div class="catnum">' + result.catnum + '</div>' +
+        '<div class="genre">' + result.genre + '</div>' +
         '<div class="artist">' + result.artist + '</div>' +
         '<div class="album">' + result.album + '</div>' +
         '<div class="location">' + result.location + '</div>' +
@@ -149,6 +150,7 @@ console.timeEnd('search');
   <div id="resultsContainer">
     <div class="headers">
       <div class="header">Catalog No.</div>
+      <div class="header">Genre</div>
       <div class="header">Artist</div>
       <div class="header">Album</div>
       <div class="header">Location</div>
