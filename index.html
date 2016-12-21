@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <style type="text/css">
+    body {
+      width: 100%;
+    }
+
+    form#search {
+      margin-bottom: 10px;
+    }
+
+    #resultsContainer {
+      width: 80%;
+      max-width: 800px;
+    }
+
+    #resultsContainer .headers {
+      margin-bottom: 1em;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      background: black;
+      color: white;
+    }
+
+    #resultsContainer .headers .header {
+      flex: 1 1 auto;
+      width: 25%;
+      padding: 5px;
+      padding-left: 15px;
+    }
+
+    #results .result {
+      display: flex;
+      flex-direction: row;
+    }
+
+    #results .result * {
+      flex: 1 1 auto;
+      width: 25%;
+      padding: 5px;
+      padding-left: 15px;
+    }
+
+    .odd {
+      background: #fee;
+    }
+
+    .even {
+      background: #fdd;
+    }
+  </style>
+
+  <script type="text/javascript">
+    window.addEventListener("load", function() {
+      var API_URL = 'https://script.google.com/macros/s/AKfycbxcejorILrqZyEb0G8VtUfMor5i5g0lVl4ftBpsdL4xneLvAqI/exec';
+
+      var searchForm = document.querySelector('form#search');
+      searchForm.addEventListener('submit', submitSearch);
+
+      function submitSearch(e) {
+        e.preventDefault();
+        var form = document.querySelector('form#search');
+        var button = document.querySelector('form input[type=submit]');
+        button.value = 'Working...';
+        button.disabled = true;
+        fetchData(form.elements);
+      }
+
+      // Make a JSONP call that fires `formatResults`.
+      function fetchData(fields, done) {
+        fields = Array.prototype.slice.call(fields);
+        var url = API_URL + '?callback=formatResults&responseType=jsonp&' + fields.reduce(function(sum, field) {
+          if (field.value && field.type === 'text') sum.push(field.name + '=' + encodeURIComponent(field.value));
+          return sum;
+        }, []).join('&');
+
+        var script = document.createElement('script');
+        script.src = url;
+        script.type = 'text/javascript';
+        document.querySelector('body').appendChild(script);
+console.log('searching...');
+console.time('search');
+      }
+
+    });
+
+    function formatResults(results) {
+console.log('search complete.');
+console.timeEnd('search');
+      var button = document.querySelector('form input[type=submit]');
+      button.value = 'Submit';
+      button.disabled = false;
+
+      var elemResults = document.querySelector('#results');
+      elemResults.innerHTML = '';
+      var zebra = false;
+
+      results.forEach(function(result) {
+        elemResults.innerHTML += formatResult(result, zebra = !zebra);
+      });
+    }
+
+    function formatError(status, message) {
+      return '<div class="error">Server returned' +
+        (status ? ' status ' + status : '') + ': ' +
+        message +
+        '</div>';
+    }
+
+    function formatResult(result, zebra) {
+      return '<div class="result ' + (zebra ? 'even' : 'odd') + '">' +
+        '<div class="catnum">' + result.catnum + '</div>' +
+        '<div class="artist">' + result.artist + '</div>' +
+        '<div class="album">' + result.album + '</div>' +
+        '<div class="location">' + result.location + '</div>' +
+        '</div>';
+    }
+  </script>
+</head>
+
+<body>
+  <div>
+    <h1>WRFL Catalog Search</h1>
+    <form id="search" action="#">
+      <label>Artist
+        <br>
+        <input type="text" name="artist">
+      </label>
+      <br>
+      <label>Album
+        <br>
+        <input type="text" name="album">
+      </label>
+      <br>
+      <label>Catalog Number
+        <br>
+        <input type="text" name="catnum">
+      </label>
+      <br>
+      <input type="submit" value="Submit" onsubmit="submitSearch()">
+    </form>
+  </div>
+
+  <div id="resultsContainer">
+    <div class="headers">
+      <div class="header">Catalog No.</div>
+      <div class="header">Artist</div>
+      <div class="header">Album</div>
+      <div class="header">Location</div>
+    </div>
+    <div id="results">
+
+    </div>
+  </div>
+</body>
+</html>
