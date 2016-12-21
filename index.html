@@ -3,6 +3,10 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <style type="text/css">
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       width: 100%;
     }
@@ -14,6 +18,13 @@
     #resultsContainer {
       width: 80%;
       max-width: 800px;
+    }
+
+    #resultsContainer .error {
+      width: 100%;
+      background: #eaa;
+      color: #111;
+      padding: 10px;
     }
 
     #resultsContainer .headers {
@@ -100,16 +111,17 @@ console.timeEnd('search');
       elemResults.innerHTML = '';
       var zebra = false;
 
-      results.forEach(function(result) {
-        elemResults.innerHTML += formatResult(result, zebra = !zebra);
-      });
+      if (results.error) {
+        elemResults.innerHTML = formatError(results.error);
+      } else {
+        results.forEach(function(result) {
+          elemResults.innerHTML += formatResult(result, zebra = !zebra);
+        });
+      }
     }
 
-    function formatError(status, message) {
-      return '<div class="error">Server returned' +
-        (status ? ' status ' + status : '') + ': ' +
-        message +
-        '</div>';
+    function formatError(message) {
+      return '<div class="error">' + message + '</div>';
     }
 
     function formatResult(result, zebra) {
