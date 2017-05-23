@@ -19,6 +19,11 @@
       margin-bottom: 10px;
     }
 
+    label.input {
+      display: block;
+      margin-bottom: 10px;
+    }
+
     #resultsContainer {
       max-width: 1024px;
     }
@@ -31,6 +36,17 @@
       padding: 10px;
       animation: FADEIN 0.5s;
       animation-fill-mode: both;
+    }
+
+    #resultsContainer .status {
+      width: 100%;
+      background: #fee;
+      /*opacity: 0;*/
+      color: #111;
+      padding: 10px;
+      line-height: 2em;
+      /*animation: FADEIN 0.5s;
+      animation-fill-mode: both;*/
     }
 
     @keyframes FADEIN {
@@ -80,6 +96,19 @@
   </style>
 
   <script type="text/javascript">
+    var SEARCH_MESSAGES = [
+      'Opening spreadsheet...',
+      'Searching...',
+      'Optimizing so the next search will be faster...',
+      'Still working. There sure is a lot of music in the world...',
+      'Search seems to be taking a while; stick with it...',
+      'Maybe we should hire more hamsters...',
+      'Continuing the search...'
+    ];
+
+    var searchStatusIdx;
+    var searchStatusLoop;
+
     window.addEventListener("load", function() {
       var API_URL = 'https://script.google.com/macros/s/AKfycbxj1_ayTm-d3hg-usoF2P5bj5ZtP8VAWWZpPjRQTSUtzUPexBE/exec';
 
@@ -106,16 +135,31 @@
         var script = document.createElement('script');
         script.src = url;
         script.type = 'text/javascript';
-        document.querySelector('body').appendChild(script);
-console.log('searching...');
-console.time('search');
+        document.querySelector('head').appendChild(script);
+
+        searchStatusIdx = 0;
+        updateSearchStatus();
+
+        console.log('Searching...');
+        console.time('search');
       }
 
     });
 
+    function updateSearchStatus() {
+      var currentMessages = SEARCH_MESSAGES.slice(0, searchStatusIdx++ + 1);
+      var elemResults = document.querySelector('#results');
+      elemResults.innerHTML = formatStatus(currentMessages.join('<br>'));
+      if (searchStatusIdx < SEARCH_MESSAGES.length) {
+        searchStatusLoop = setTimeout(updateSearchStatus, 7000);
+      }
+    }
+
     function formatResults(results) {
-console.log('search complete.');
-console.timeEnd('search');
+      console.log('search complete.');
+      console.timeEnd('search');
+      clearTimeout(searchStatusLoop);
+
       var button = document.querySelector('form input[type=submit]');
       button.value = 'Submit';
       button.disabled = false;
@@ -139,6 +183,10 @@ console.timeEnd('search');
       return '<div class="error">' + message + '</div>';
     }
 
+    function formatStatus(message) {
+      return '<div class="status">' + message + '</div>';
+    }
+
     function formatResult(result, zebra) {
       return '<div class="result ' + (zebra ? 'even' : 'odd') + '">' +
         '<div class="catnum">' + result.catnum + '</div>' +
@@ -154,23 +202,20 @@ console.timeEnd('search');
 
 <body>
   <div>
-    <h1>WRFL Catalog Search</h1>
+    <h1>WRFL CD Catalog Search</h1>
     <form id="search" action="#">
-      <label>Artist
+      <label class="input">Artist
         <br>
         <input type="text" name="artist">
       </label>
-      <br>
-      <label>Album
+      <label class="input">Album
         <br>
         <input type="text" name="album">
       </label>
-      <br>
-      <label>Catalog Number
+      <label class="input">Catalog Number
         <br>
         <input type="text" name="catnum">
       </label>
-      <br>
       <input type="submit" value="Submit" onsubmit="submitSearch()">
     </form>
   </div>
