@@ -198,12 +198,12 @@
 
     function formatResult(result, zebra) {
       return '<div class="result ' + (zebra ? 'even' : 'odd') + '">' +
-        '<div class="catnum">' + result.catnum + '</div>' +
-        '<div class="genre">' + result.genre + '</div>' +
-        '<div class="region">' + result.region + '</div>' +
         '<div class="artist">' + result.artist + '</div>' +
         '<div class="album">' + result.album + '</div>' +
         '<div class="location">' + result.location + '</div>' +
+        '<div class="genre">' + result.genre + '</div>' +
+        '<div class="region">' + result.region + '</div>' +
+        '<div class="catnum">' + result.catnum + '</div>' +
         '</div>';
     }
   </script>
@@ -231,12 +231,12 @@
 
   <div id="resultsContainer">
     <div class="headers">
-      <div class="header">Catalog No.</div>
-      <div class="header">Genre</div>
-      <div class="header">Region (World only)</div>
       <div class="header">Artist</div>
       <div class="header">Album</div>
       <div class="header">Location</div>
+      <div class="header">Genre</div>
+      <div class="header">Region (World only)</div>
+      <div class="header">Catalog No.</div>
     </div>
     <div id="results">
 
