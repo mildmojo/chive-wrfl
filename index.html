@@ -101,9 +101,8 @@
       'Searching...',
       'Optimizing so the next search will be faster...',
       'Still working. There sure is a lot of music in the world...',
-      'Search seems to be taking a while; stick with it...',
       'Maybe we should hire more hamsters...',
-      'Continuing the search...'
+      '' // last message is never shown due to math in `updateSearchStatus`
     ];
 
     var searchStatusIdx;
@@ -152,9 +151,12 @@
     function updateSearchStatus() {
       var currentMessages = SEARCH_MESSAGES.slice(0, searchStatusIdx++ + 1);
       var elemResults = document.querySelector('#results');
-      elemResults.innerHTML = formatStatus(currentMessages.join('<br>'));
+
       if (searchStatusIdx < SEARCH_MESSAGES.length) {
+        elemResults.innerHTML = formatStatus(currentMessages.join('<br>'));
         searchStatusLoop = setTimeout(updateSearchStatus, 7000);
+      } else {
+        elemResults.innerHTML = formatError('Sorry, the service encountered an error or took too long to respond. Please try again.');
       }
     }
 
