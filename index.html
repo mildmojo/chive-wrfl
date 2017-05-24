@@ -117,9 +117,7 @@
       function submitSearch(e) {
         e.preventDefault();
         var form = document.querySelector('form#search');
-        var button = document.querySelector('form input[type=submit]');
-        button.value = 'Working...';
-        button.disabled = true;
+        toggleButtonEnabled();
         fetchData(form.elements);
       }
 
@@ -157,17 +155,21 @@
         searchStatusLoop = setTimeout(updateSearchStatus, 7000);
       } else {
         elemResults.innerHTML = formatError('Sorry, the service encountered an error or took too long to respond. Please try again.');
+        toggleButtonEnabled();
       }
+    }
+
+    function toggleButtonEnabled(val) {
+      var button = document.querySelector('form input[type=submit]');
+      button.disabled = typeof val !== 'undefined' ? !val : !button.disabled;
+      button.value = button.disabled ? 'Working...' : 'Submit';
     }
 
     function formatResults(results) {
       console.log('search complete.');
       console.timeEnd('search');
       clearTimeout(searchStatusLoop);
-
-      var button = document.querySelector('form input[type=submit]');
-      button.value = 'Submit';
-      button.disabled = false;
+      toggleButtonEnabled();
 
       var elemResults = document.querySelector('#results');
       elemResults.innerHTML = '';
