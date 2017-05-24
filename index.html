@@ -125,6 +125,9 @@
       }
 
       // Make a JSONP call that fires `formatResults`.
+      // This sucks because we can't tell if the request fails.
+      // Eventually this should proxy through the server serving this page
+      //   to get around cross-origin restrictions. Or convert to an iframe.
       function fetchData(fields, done) {
         fields = Array.prototype.slice.call(fields);
         var url = API_URL + '?callback=formatResults&responseType=jsonp&' + fields.reduce(function(sum, field) {
@@ -173,9 +176,15 @@
      } else if (results.length === 0) {
         elemResults.innerHTML = formatError('No results.');
       } else {
-        results.forEach(function(result) {
-          elemResults.innerHTML += formatResult(result, zebra = !zebra);
-        });
+        results
+          .sort(function(a, b) {
+            var artistCompare = a.artist.localeCompare(b.artist, {sensitivity: 'base'});
+            var albumCompare = a.album.localeCompare(b.album, {sensitivity: 'base'});
+            return artistCompare || albumCompare;
+          })
+          .forEach(function(result) {
+            elemResults.innerHTML += formatResult(result, zebra = !zebra);
+          });
       }
     }
 
